@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── NextAuth (mantidos em inglês — padrão exigido pelo adapter) ──────────────
+
+model User {
+  id            String        @id @default(cuid())
+  name          String?
+  email         String        @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  agendamentos  Agendamento[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// ─── Domínio da barbearia ─────────────────────────────────────────────────────
+
+model Barbearia {
+  id        String     @id @default(uuid())
+  nome      String
+  endereco  String
+  telefones String[]
+  descricao String
+  imageUrl  String
+  barbeiros Barbeiro[]
+  servicos  Servico[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Barbeiro {
+  id           String        @id @default(uuid())
+  nome         String
+  imageUrl     String?
+  barbeariaId  String
+  barbearia    Barbearia     @relation(fields: [barbeariaId], references: [id])
+  agendamentos Agendamento[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Servico {
+  id             String        @id @default(uuid())
+  nome           String
+  descricao      String
+  imageUrl       String?
+  preco          Decimal       @db.Decimal(10, 2)
+  duracaoMinutos Int
+  barbeariaId    String
+  barbearia      Barbearia     @relation(fields: [barbeariaId], references: [id])
+  agendamentos   Agendamento[]
+}
+
+enum StatusAgendamento {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+  CONCLUIDO
+}
+
+model Agendamento {
+  id         String            @id @default(uuid())
+  usuarioId  String
+  usuario    User              @relation(fields: [usuarioId], references: [id])
+  servicoId  String
+  servico    Servico           @relation(fields: [servicoId], references: [id])
+  barbeiroId String?
+  barbeiro   Barbeiro?         @relation(fields: [barbeiroId], references: [id])
+  status     StatusAgendamento @default(CONFIRMADO)
+  data       DateTime
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+}
