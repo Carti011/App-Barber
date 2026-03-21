@@ -19,23 +19,31 @@ const Home = async () => {
 
   return (
     <div>
-      {/* Header */}
+      {/* ── HEADER ── */}
       <Header />
 
+      {/*
+       * [WHITE-LABEL] Padding geral do conteúdo da página
+       * Ajuste p-5 para aumentar/diminuir o espaço nas bordas
+       */}
       <div className="p-5">
-        {/* TEXTO */}
+        {/* ── SAUDAÇÃO ── */}
         <h2 className="text-xl font-bold">Olá, Felipe!</h2>
         <p>Segunda-feira, 05 de agosto.</p>
 
-        {/* BUSCA */}
+        {/* ── BUSCA ── */}
         <div className="mt-6 flex items-center gap-2">
+          {/* [WHITE-LABEL] Placeholder do campo de busca */}
           <Input placeholder="Faça sua busca..." />
           <Button>
             <SearchIcon />
           </Button>
         </div>
 
-        {/* BUSCA RÁPIDA */}
+        {/* ── BUSCA RÁPIDA ──
+         * Ícones e categorias definidos em app/_constants/busca.ts
+         * [WHITE-LABEL] Para adicionar/remover categorias, edite esse arquivo
+         */}
         <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {opcoesBuscaRapida.map((opcao) => (
             <Button className="gap-2" variant="secondary" key={opcao.titulo}>
@@ -50,8 +58,12 @@ const Home = async () => {
           ))}
         </div>
 
-        {/* IMAGEM */}
-        <div className="relative mt-6 h-[150px] w-full md:h-75">
+        {/* ── BANNER PRINCIPAL ──
+         * [WHITE-LABEL] Troque /banner-01.png em public/ pela imagem do cliente
+         * Altura mobile: h-37.5 (150px) | Altura desktop: md:h-75 (300px)
+         * Para ajustar a altura, altere os valores de h-* e md:h-*
+         */}
+        <div className="relative mt-6 h-37.5 w-full md:h-75">
           <Image
             alt="Agende nos melhores com FSW Barber"
             src="/banner-01.png"
@@ -60,9 +72,12 @@ const Home = async () => {
           />
         </div>
 
-        {/* AGENDAMENTO */}
+        {/* ── AGENDAMENTOS ── */}
         <AgendamentoItem />
 
+        {/* ── BARBEARIAS RECOMENDADAS ──
+         * [WHITE-LABEL] Título da seção — altere o texto abaixo
+         */}
         <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
           Recomendados
         </h2>
@@ -72,6 +87,9 @@ const Home = async () => {
           ))}
         </div>
 
+        {/* ── BARBEARIAS POPULARES ──
+         * [WHITE-LABEL] Título da seção — altere o texto abaixo
+         */}
         <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
           Populares
         </h2>
@@ -82,6 +100,9 @@ const Home = async () => {
         </div>
       </div>
 
+      {/* ── FOOTER ──
+       * [WHITE-LABEL] Texto de copyright — troque "FSW Barber" pelo nome do cliente
+       */}
       <footer>
         <Card>
           <CardContent className="px-5 py-6">

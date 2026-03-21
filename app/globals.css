@@ -2,6 +2,10 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* ─── MAPEAMENTO DE VARIÁVEIS → CLASSES TAILWIND ────────────────────────────
+   Necessário para o Tailwind v4 reconhecer as variáveis como classes utilitárias.
+   Não altere este bloco — apenas as variáveis dentro de .dark abaixo.
+──────────────────────────────────────────────────────────────────────────── */
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -28,6 +32,18 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ─── [WHITE-LABEL] TEMA DO CLIENTE ─────────────────────────────────────────
+   Altere as variáveis abaixo para customizar a identidade visual por cliente.
+   Formato das cores: H S% L%  (ex: 252 100% 69% = roxo vibrante)
+   Use https://hslpicker.com para encontrar o valor HSL de qualquer cor.
+
+   --primary          → cor principal: botões, badges, ícones ativos
+   --background       → fundo geral da página
+   --card             → fundo dos cards e painéis
+   --border           → cor das bordas e linhas divisórias
+   --muted-foreground → textos secundários / legendas
+   --radius           → arredondamento global (0 = sem arredondamento, 1rem = bem arredondado)
+──────────────────────────────────────────────────────────────────────────── */
 .dark {
   --background: 225 9% 9%;
   --foreground: 210 40% 98%;
@@ -38,6 +54,7 @@
   --popover: 228 9% 11%;
   --popover-foreground: 210 40% 98%;
 
+  /* [WHITE-LABEL] Cor principal do cliente — aparece em botões, destaques e ícones */
   --primary: 252 100% 69%;
   --primary-foreground: 0 0% 100%;
 
@@ -57,6 +74,7 @@
   --input: 228 6% 16%;
   --ring: 212.7 26.8% 83.9%;
 
+  /* [WHITE-LABEL] Arredondamento global — afeta botões, cards e inputs */
   --radius: 0.5rem;
 }
 
