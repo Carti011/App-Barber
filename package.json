@@ -10,7 +10,7 @@
     "test": "docker-compose up -d && node infra/scripts/wait-for-postgres.js && NODE_ENV=test npx prisma migrate deploy && jest --runInBand --verbose",
     "test:watch": "jest --watchAll --runInBand",
     "postinstall": "prisma generate",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
