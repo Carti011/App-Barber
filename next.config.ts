@@ -9,10 +9,8 @@ const nextConfig: NextConfig = {
      */
     remotePatterns: [
       {
+        protocol: "https",
         hostname: "utfs.io", // UploadThing — usado nas imagens do seed de desenvolvimento
-      },
-      {
-        hostname: "placehold.co", // Placeholder — apenas desenvolvimento, remova em produção
       },
     ],
   },
