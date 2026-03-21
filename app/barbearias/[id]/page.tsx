@@ -1,3 +1,4 @@
+import ServicoItem from "@/app/_components/servico-item";
 import { Button } from "@/app/_components/ui/button";
 import { db } from "@/app/_lib/prisma";
 import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
@@ -14,6 +15,7 @@ const BarbeariaPage = async ({ params }: Props) => {
 
   const barbearia = await db.barbearia.findUnique({
     where: { id },
+    include: { servicos: true },
   });
 
   if (!barbearia) {
@@ -77,6 +79,18 @@ const BarbeariaPage = async ({ params }: Props) => {
         {/* [WHITE-LABEL] Título da seção de descrição */}
         <h2 className="text-xs font-bold text-gray-400 uppercase">Sobre nós</h2>
         <p className="text-justify text-sm">{barbearia.descricao}</p>
+      </div>
+
+      {/* ── SERVIÇOS ──
+       * [WHITE-LABEL] Título da seção de serviços
+       */}
+      <div className="space-y-3 p-5">
+        <h2 className="text-xs font-bold text-gray-400 uppercase">Serviços</h2>
+        <div className="space-y-3">
+          {barbearia.servicos.map((servico) => (
+            <ServicoItem key={servico.id} servico={servico} />
+          ))}
+        </div>
       </div>
     </div>
   );
