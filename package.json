@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "docker-compose up -d && node infra/scripts/wait-for-postgres.js && NODE_ENV=test npx prisma migrate deploy && jest --runInBand --verbose",
