@@ -1,5 +1,8 @@
+import TelefoneItem from "@/app/_components/telefone-item";
 import ServicoItem from "@/app/_components/servico-item";
+import SidebarSheet from "@/app/_components/sidebar-sheet";
 import { Button } from "@/app/_components/ui/button";
+import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 import { db } from "@/app/_lib/prisma";
 import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
@@ -48,14 +51,19 @@ const BarbeariaPage = async ({ params }: Props) => {
           </Link>
         </Button>
 
-        {/* Botão menu — será conectado ao SidebarSheet futuramente */}
-        <Button
-          size="icon"
-          variant="secondary"
-          className="absolute top-4 right-4"
-        >
-          <MenuIcon />
-        </Button>
+        {/* Botão menu */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              variant="outline"
+              className="absolute top-4 right-4"
+            >
+              <MenuIcon />
+            </Button>
+          </SheetTrigger>
+          <SidebarSheet />
+        </Sheet>
       </div>
 
       {/* ── NOME E LOCALIZAÇÃO ── */}
@@ -84,13 +92,20 @@ const BarbeariaPage = async ({ params }: Props) => {
       {/* ── SERVIÇOS ──
        * [WHITE-LABEL] Título da seção de serviços
        */}
-      <div className="space-y-3 p-5">
+      <div className="space-y-3 border-b border-solid p-5">
         <h2 className="text-xs font-bold text-gray-400 uppercase">Serviços</h2>
         <div className="space-y-3">
           {barbearia.servicos.map((servico) => (
             <ServicoItem key={servico.id} servico={servico} />
           ))}
         </div>
+      </div>
+
+      {/* ── CONTATO ── */}
+      <div className="space-y-3 p-5">
+        {barbearia.telefones.map((telefone) => (
+          <TelefoneItem key={telefone} telefone={telefone} />
+        ))}
       </div>
     </div>
   );
