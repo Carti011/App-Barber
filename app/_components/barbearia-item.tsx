@@ -16,7 +16,7 @@ const BarbeariaItem = ({ barbearia }: BarbeariaItemProps) => {
      * [WHITE-LABEL] Largura mínima do card na listagem horizontal
      * Aumente min-w-[] para cards mais largos, diminua para caber mais na tela
      */
-    <Card className="min-w-41.75 rounded-2xl">
+    <Card className="min-w-41.75 shrink-0 rounded-2xl">
       <CardContent className="p-0 px-1 pt-1">
         {/* ── IMAGEM ── */}
         {/*

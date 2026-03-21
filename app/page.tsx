@@ -81,7 +81,7 @@ const Home = async () => {
         <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
           Recomendados
         </h2>
-        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {barbearias.map((barbearia) => (
             <BarbeariaItem key={barbearia.id} barbearia={barbearia} />
           ))}
@@ -93,7 +93,7 @@ const Home = async () => {
         <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
           Populares
         </h2>
-        <div className="flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {barbeariasPopulares.map((barbearia) => (
             <BarbeariaItem key={barbearia.id} barbearia={barbearia} />
           ))}
