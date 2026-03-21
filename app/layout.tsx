@@ -5,7 +5,7 @@ import "./globals.css";
 const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FSW Barber",
+  title: "Withe Label - Barber Shop",
   description: "Sistema de agendamento para barbearias",
 };
 
