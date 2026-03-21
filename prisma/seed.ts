@@ -1,5 +1,5 @@
 import "dotenv/config";
-import db from "../app/_lib/prisma";
+import { db } from "../app/_lib/prisma";
 
 const prisma = db;
 
@@ -17,15 +17,31 @@ async function popular() {
       telefones: ["(11) 99999-9999", "(11) 3333-4444"],
       descricao:
         "A melhor barbearia da cidade. Especialistas em cortes modernos e clássicos, barba e muito mais.",
-      imageUrl: "https://placehold.co/600x400",
+      imageUrl:
+        "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
     },
   });
 
   await prisma.barbeiro.createMany({
     data: [
-      { nome: "Carlos Silva", barbeariaId: barbearia.id },
-      { nome: "João Oliveira", barbeariaId: barbearia.id },
-      { nome: "Rafael Santos", barbeariaId: barbearia.id },
+      {
+        nome: "Carlos Silva",
+        barbeariaId: barbearia.id,
+        imageUrl:
+          "https://utfs.io/f/45331760-899c-4b4b-910e-e00babb6ed81-16q.png",
+      },
+      {
+        nome: "João Oliveira",
+        barbeariaId: barbearia.id,
+        imageUrl:
+          "https://utfs.io/f/5832df58-cfd7-4b3f-b102-42b7e150ced2-16r.png",
+      },
+      {
+        nome: "Rafael Santos",
+        barbeariaId: barbearia.id,
+        imageUrl:
+          "https://utfs.io/f/7e309eaa-d722-465b-b8b6-76217404a3d3-16s.png",
+      },
     ],
   });
 
