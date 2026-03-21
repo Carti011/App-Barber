@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 // Para trocar: importe a nova fonte aqui e substitua `geist` abaixo
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "./_components/ui/sonner";
+import Footer from "./_components/footer";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -24,6 +26,8 @@ export default function RootLayout({
         <div className="flex h-full flex-col">
           <div className="flex-1">{children}</div>
         </div>
+        <Footer />
+        <Toaster />
       </body>
     </html>
   );
