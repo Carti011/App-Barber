@@ -33,6 +33,11 @@ const Home = async () => {
       })
     : [];
 
+  const agendamentosSerializados = agendamentosConfirmados.map((a) => ({
+    ...a,
+    servico: { ...a.servico, preco: Number(a.servico.preco) },
+  }));
+
   return (
     <div>
       {/* ── HEADER ── */}
@@ -111,7 +116,7 @@ const Home = async () => {
               Agendamentos
             </h2>
             <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-              {agendamentosConfirmados.map((agendamento) => (
+              {agendamentosSerializados.map((agendamento) => (
                 <AgendamentoItem
                   key={agendamento.id}
                   agendamento={agendamento}

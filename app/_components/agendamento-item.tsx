@@ -1,6 +1,14 @@
 "use client";
 
-import { Prisma } from "@/app/generated/prisma/client";
+import { Agendamento, Barbearia, Servico } from "@/app/generated/prisma/client";
+
+// Versão serializável para passar de Server para Client Component
+type AgendamentoPlano = Omit<Agendamento, never> & {
+  servico: Omit<Servico, "preco"> & {
+    preco: number | string;
+    barbearia: Barbearia;
+  };
+};
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
@@ -33,15 +41,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 
 interface AgendamentoItemProps {
-  agendamento: Prisma.AgendamentoGetPayload<{
-    include: {
-      servico: {
-        include: {
-          barbearia: true;
-        };
-      };
-    };
-  }>;
+  agendamento: AgendamentoPlano;
 }
 
 const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
@@ -179,7 +179,7 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
 
           {/* ── TELEFONES ── */}
           <div className="space-y-3">
-            {barbearia.telefones.map((telefone, index) => (
+            {barbearia.telefones.map((telefone: string, index: number) => (
               <TelefoneItem key={index} telefone={telefone} />
             ))}
           </div>

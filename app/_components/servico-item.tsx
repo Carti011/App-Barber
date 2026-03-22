@@ -1,6 +1,9 @@
 "use client";
 
 import { Barbearia, Servico, Agendamento } from "@/app/generated/prisma/client";
+
+// Versão serializável para passar de Server para Client Component
+type ServicoPlano = Omit<Servico, "preco"> & { preco: number | string };
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -23,7 +26,7 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import DialogoLogin from "./dialogo-login";
 
 interface ServicoItemProps {
-  servico: Servico;
+  servico: ServicoPlano;
   barbearia: Pick<Barbearia, "nome">;
 }
 

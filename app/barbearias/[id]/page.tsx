@@ -25,6 +25,11 @@ const BarbeariaPage = async ({ params }: Props) => {
     return notFound();
   }
 
+  const servicosSerializados = barbearia.servicos.map((s) => ({
+    ...s,
+    preco: Number(s.preco),
+  }));
+
   return (
     <div>
       {/* ── IMAGEM DE CAPA ──
@@ -95,7 +100,7 @@ const BarbeariaPage = async ({ params }: Props) => {
       <div className="space-y-3 border-b border-solid p-5">
         <h2 className="text-xs font-bold text-gray-400 uppercase">Serviços</h2>
         <div className="space-y-3">
-          {barbearia.servicos.map((servico) => (
+          {servicosSerializados.map((servico) => (
             <ServicoItem
               key={servico.id}
               servico={servico}

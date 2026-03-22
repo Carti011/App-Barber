@@ -37,6 +37,16 @@ const AgendamentosPage = async () => {
     orderBy: { data: "asc" },
   });
 
+  const confirmadosSerializados = agendamentosConfirmados.map((a) => ({
+    ...a,
+    servico: { ...a.servico, preco: Number(a.servico.preco) },
+  }));
+
+  const finalizadosSerializados = agendamentosFinalizados.map((a) => ({
+    ...a,
+    servico: { ...a.servico, preco: Number(a.servico.preco) },
+  }));
+
   return (
     <>
       <Header />
@@ -44,23 +54,23 @@ const AgendamentosPage = async () => {
         {/* [WHITE-LABEL] Título da página de agendamentos */}
         <h1 className="text-xl font-bold">Agendamentos</h1>
 
-        {agendamentosConfirmados.length > 0 && (
+        {confirmadosSerializados.length > 0 && (
           <>
             <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
               Confirmados
             </h2>
-            {agendamentosConfirmados.map((agendamento) => (
+            {confirmadosSerializados.map((agendamento) => (
               <AgendamentoItem key={agendamento.id} agendamento={agendamento} />
             ))}
           </>
         )}
 
-        {agendamentosFinalizados.length > 0 && (
+        {finalizadosSerializados.length > 0 && (
           <>
             <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
               Finalizados
             </h2>
-            {agendamentosFinalizados.map((agendamento) => (
+            {finalizadosSerializados.map((agendamento) => (
               <AgendamentoItem key={agendamento.id} agendamento={agendamento} />
             ))}
           </>
