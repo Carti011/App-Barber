@@ -94,6 +94,8 @@ model Servico {
   barbeariaId    String
   barbearia      Barbearia     @relation(fields: [barbeariaId], references: [id])
   agendamentos   Agendamento[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 }
 
 enum StatusAgendamento {

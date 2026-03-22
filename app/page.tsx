@@ -1,65 +1,108 @@
+import Header from "./_components/header";
+import { Button } from "./_components/ui/button";
 import Image from "next/image";
+import { db } from "./_lib/prisma";
+import BarbeariaItem from "./_components/barbearia-item";
+import { opcoesBuscaRapida } from "./_constants/busca";
+import AgendamentoItem from "./_components/agendamento-item";
+import Busca from "./_components/busca";
+import Link from "next/link";
 
-export default function Home() {
+const Home = async () => {
+  const barbearias = await db.barbearia.findMany({});
+  const barbeariasPopulares = await db.barbearia.findMany({
+    orderBy: {
+      nome: "desc",
+    },
+  });
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      {/* ── HEADER ── */}
+      <Header />
+
+      {/*
+       * [WHITE-LABEL] Padding geral do conteúdo da página
+       * Ajuste p-5 para aumentar/diminuir o espaço nas bordas
+       */}
+      <div className="p-5">
+        {/* ── SAUDAÇÃO ── */}
+        <h2 className="text-xl font-bold">Olá, Felipe!</h2>
+        <p>Segunda-feira, 05 de agosto.</p>
+
+        {/* ── BUSCA ── */}
+        <div className="mt-6">
+          <Busca />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* ── BUSCA RÁPIDA ──
+         * Ícones e categorias definidos em app/_constants/busca.ts
+         * [WHITE-LABEL] Para adicionar/remover categorias, edite esse arquivo
+         */}
+        <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {opcoesBuscaRapida.map((opcao) => (
+            <Button
+              className="gap-2"
+              variant="secondary"
+              key={opcao.titulo}
+              asChild
+            >
+              <Link href={`/barbearias?servico=${opcao.titulo}`}>
+                <Image
+                  src={opcao.imageUrl}
+                  width={16}
+                  height={16}
+                  alt={opcao.titulo}
+                />
+                {opcao.titulo}
+              </Link>
+            </Button>
+          ))}
         </div>
-      </main>
+
+        {/* ── BANNER PRINCIPAL ──
+         * [WHITE-LABEL] Troque /banner-01.png em public/ pela imagem do cliente
+         * Altura mobile: h-37.5 (150px) | Altura desktop: md:h-75 (300px)
+         * Para ajustar a altura, altere os valores de h-* e md:h-*
+         */}
+        <div className="relative mt-6 h-37.5 w-full md:h-75">
+          <Image
+            alt="Agende nos melhores com FSW Barber"
+            src="/banner-01.png"
+            fill
+            className="rounded-xl object-cover"
+          />
+        </div>
+
+        {/* ── AGENDAMENTOS ── */}
+        <AgendamentoItem />
+
+        {/* ── BARBEARIAS RECOMENDADAS ──
+         * [WHITE-LABEL] Título da seção — altere o texto abaixo
+         */}
+        <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+          Recomendados
+        </h2>
+        <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {barbearias.map((barbearia) => (
+            <BarbeariaItem key={barbearia.id} barbearia={barbearia} />
+          ))}
+        </div>
+
+        {/* ── BARBEARIAS POPULARES ──
+         * [WHITE-LABEL] Título da seção — altere o texto abaixo
+         */}
+        <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
+          Populares
+        </h2>
+        <div className="flex gap-4 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
+          {barbeariasPopulares.map((barbearia) => (
+            <BarbeariaItem key={barbearia.id} barbearia={barbearia} />
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default Home;
