@@ -8,7 +8,7 @@ interface ObterAgendamentosParams {
   data: Date;
 }
 
-export const obterAgendamentos = ({ data }: ObterAgendamentosParams) => {
+export const obterAgendamentos = async ({ data }: ObterAgendamentosParams) => {
   return db.agendamento.findMany({
     where: {
       data: {
