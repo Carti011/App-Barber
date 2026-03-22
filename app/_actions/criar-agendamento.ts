@@ -23,4 +23,5 @@ export const criarAgendamento = async (params: CriarAgendamentoParams) => {
     },
   });
   revalidatePath("/barbearias/[id]");
+  revalidatePath("/agendamentos");
 };
