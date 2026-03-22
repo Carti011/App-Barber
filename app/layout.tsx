@@ -5,6 +5,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "./_components/ui/sonner";
 import Footer from "./_components/footer";
+import AuthProvider from "./_providers/auth";
 
 const geist = Geist({ subsets: ["latin"] });
 
@@ -22,12 +23,12 @@ export default function RootLayout({
   return (
     // [WHITE-LABEL] Remova className="dark" para ativar tema claro por padrão
     <html lang="pt" className="dark">
-      <body className={`${geist.className} h-full`}>
-        <div className="flex h-full flex-col">
-          <div className="flex-1">{children}</div>
-        </div>
-        <Footer />
-        <Toaster />
+      <body className={geist.className}>
+        <AuthProvider>
+          {children}
+          <Footer />
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );
