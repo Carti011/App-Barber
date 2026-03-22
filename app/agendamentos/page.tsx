@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import Header from "../_components/header";
-import { db } from "../_lib/prisma";
 import { opcoesAuth } from "../_lib/autenticacao";
 import { notFound } from "next/navigation";
 import AgendamentoItem from "../_components/agendamento-item";
+import { obterAgendamentosConfirmados } from "../_data/obter-agendamentos-confirmados";
+import { obterAgendamentosFinalizados } from "../_data/obter-agendamentos-finalizados";
 
 const AgendamentosPage = async () => {
   const sessao = await getServerSession(opcoesAuth);
@@ -11,38 +12,15 @@ const AgendamentosPage = async () => {
     return notFound();
   }
 
-  const agendamentosConfirmados = await db.agendamento.findMany({
-    where: {
-      usuarioId: (sessao.user as { id: string }).id,
-      data: { gte: new Date() },
-    },
-    include: {
-      servico: {
-        include: { barbearia: true },
-      },
-    },
-    orderBy: { data: "asc" },
-  });
+  const confirmados = await obterAgendamentosConfirmados();
+  const finalizados = await obterAgendamentosFinalizados();
 
-  const agendamentosFinalizados = await db.agendamento.findMany({
-    where: {
-      usuarioId: (sessao.user as { id: string }).id,
-      data: { lt: new Date() },
-    },
-    include: {
-      servico: {
-        include: { barbearia: true },
-      },
-    },
-    orderBy: { data: "asc" },
-  });
-
-  const confirmadosSerializados = agendamentosConfirmados.map((a) => ({
+  const confirmadosSerializados = confirmados.map((a) => ({
     ...a,
     servico: { ...a.servico, preco: Number(a.servico.preco) },
   }));
 
-  const finalizadosSerializados = agendamentosFinalizados.map((a) => ({
+  const finalizadosSerializados = finalizados.map((a) => ({
     ...a,
     servico: { ...a.servico, preco: Number(a.servico.preco) },
   }));
@@ -53,6 +31,11 @@ const AgendamentosPage = async () => {
       <div className="space-y-3 p-5">
         {/* [WHITE-LABEL] Título da página de agendamentos */}
         <h1 className="text-xl font-bold">Agendamentos</h1>
+
+        {confirmadosSerializados.length === 0 &&
+          finalizadosSerializados.length === 0 && (
+            <p className="text-gray-400">Você não tem agendamentos.</p>
+          )}
 
         {confirmadosSerializados.length > 0 && (
           <>

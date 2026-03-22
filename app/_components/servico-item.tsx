@@ -17,13 +17,15 @@ import {
 import { Calendario } from "./ui/calendario";
 import { ptBR } from "date-fns/locale";
 import { useEffect, useMemo, useState } from "react";
-import { format, isPast, isToday, set } from "date-fns";
+import { isPast, isToday, set } from "date-fns";
 import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { obterAgendamentos } from "../_actions/obter-agendamentos";
 import { Dialog, DialogContent } from "./ui/dialog";
 import DialogoLogin from "./dialogo-login";
+import ResumoAgendamento from "./resumo-agendamento";
+import { useRouter } from "next/navigation";
 
 interface ServicoItemProps {
   servico: ServicoPlano;
@@ -130,6 +132,8 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
     setHorarioSelecionado(horario);
   };
 
+  const router = useRouter();
+
   const listaHorarios = useMemo(() => {
     if (!diaSelecionado) return [];
     return obterHorariosDisponiveis({
@@ -138,15 +142,25 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
     });
   }, [agendamentosDoDia, diaSelecionado]);
 
+  const dataSelecionada = useMemo(() => {
+    if (!diaSelecionado || !horarioSelecionado) return;
+    return set(diaSelecionado, {
+      hours: Number(horarioSelecionado.split(":")[0]),
+      minutes: Number(horarioSelecionado.split(":")[1]),
+    });
+  }, [diaSelecionado, horarioSelecionado]);
+
   const handleConfirmarAgendamento = async () => {
     try {
-      if (!diaSelecionado || !horarioSelecionado) return;
-      const hora = Number(horarioSelecionado.split(":")[0]);
-      const minuto = Number(horarioSelecionado.split(":")[1]);
-      const novaData = set(diaSelecionado, { hours: hora, minutes: minuto });
-      await criarAgendamento({ servicoId: servico.id, data: novaData });
+      if (!dataSelecionada) return;
+      await criarAgendamento({ servicoId: servico.id, data: dataSelecionada });
       handleSheetAgendamentoChange();
-      toast.success("Reserva criada com sucesso!");
+      toast.success("Reserva criada com sucesso!", {
+        action: {
+          label: "Ver agendamentos",
+          onClick: () => router.push("/agendamentos"),
+        },
+      });
     } catch (error) {
       console.error(error);
       toast.error("Erro ao criar reserva!");
@@ -252,47 +266,20 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                   )}
 
                   {/* ── RESUMO DO AGENDAMENTO ── */}
-                  {horarioSelecionado && diaSelecionado && (
+                  {dataSelecionada && (
                     <div className="p-5">
-                      <Card>
-                        <CardContent className="space-y-3 p-3">
-                          <div className="flex items-center justify-between">
-                            <h2 className="font-bold">{servico.nome}</h2>
-                            <p className="text-sm font-bold">
-                              {Intl.NumberFormat("pt-BR", {
-                                style: "currency",
-                                currency: "BRL",
-                              }).format(Number(servico.preco))}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <h2 className="text-sm text-gray-400">Data</h2>
-                            <p className="text-sm">
-                              {format(diaSelecionado, "d 'de' MMMM", {
-                                locale: ptBR,
-                              })}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <h2 className="text-sm text-gray-400">Horário</h2>
-                            <p className="text-sm">{horarioSelecionado}</p>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <h2 className="text-sm text-gray-400">Barbearia</h2>
-                            <p className="text-sm">{barbearia.nome}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <ResumoAgendamento
+                        servico={servico}
+                        barbearia={barbearia}
+                        dataSelecionada={dataSelecionada}
+                      />
                     </div>
                   )}
 
                   <SheetFooter className="mt-5 px-5">
                     <Button
                       onClick={handleConfirmarAgendamento}
-                      disabled={!diaSelecionado || !horarioSelecionado}
+                      disabled={!dataSelecionada}
                     >
                       Confirmar
                     </Button>

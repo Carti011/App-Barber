@@ -14,6 +14,7 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent } from "./ui/card";
 import { format, isFuture } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
 import {
   Sheet,
   SheetClose,
@@ -39,6 +40,7 @@ import { DialogClose } from "@/app/_components/ui/dialog";
 import { cancelarAgendamento } from "../_actions/cancelar-agendamento";
 import { toast } from "sonner";
 import { useState } from "react";
+import ResumoAgendamento from "./resumo-agendamento";
 
 interface AgendamentoItemProps {
   agendamento: AgendamentoPlano;
@@ -144,38 +146,13 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
             {confirmado ? "Confirmado" : "Finalizado"}
           </Badge>
 
-          <Card className="mt-3 mb-6">
-            <CardContent className="space-y-3 p-3">
-              <div className="flex items-center justify-between">
-                <h2 className="font-bold">{agendamento.servico.nome}</h2>
-                <p className="text-sm font-bold">
-                  {Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(Number(agendamento.servico.preco))}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm text-gray-400">Data</h2>
-                <p className="text-sm">
-                  {format(agendamento.data, "d 'de' MMMM", { locale: ptBR })}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm text-gray-400">Horário</h2>
-                <p className="text-sm">
-                  {format(agendamento.data, "HH:mm", { locale: ptBR })}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm text-gray-400">Barbearia</h2>
-                <p className="text-sm">{barbearia.nome}</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="mt-6 mb-3">
+            <ResumoAgendamento
+              servico={agendamento.servico}
+              barbearia={barbearia}
+              dataSelecionada={agendamento.data}
+            />
+          </div>
 
           {/* ── TELEFONES ── */}
           <div className="space-y-3">

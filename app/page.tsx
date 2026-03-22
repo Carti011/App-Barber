@@ -11,6 +11,7 @@ import { getServerSession } from "next-auth";
 import { opcoesAuth } from "./_lib/autenticacao";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { obterAgendamentosConfirmados } from "./_data/obter-agendamentos-confirmados";
 
 const Home = async () => {
   const sessao = await getServerSession(opcoesAuth);
@@ -18,22 +19,9 @@ const Home = async () => {
   const barbeariasPopulares = await db.barbearia.findMany({
     orderBy: { nome: "desc" },
   });
-  const agendamentosConfirmados = sessao?.user
-    ? await db.agendamento.findMany({
-        where: {
-          usuarioId: (sessao.user as { id: string }).id,
-          data: { gte: new Date() },
-        },
-        include: {
-          servico: {
-            include: { barbearia: true },
-          },
-        },
-        orderBy: { data: "asc" },
-      })
-    : [];
+  const confirmados = await obterAgendamentosConfirmados();
 
-  const agendamentosSerializados = agendamentosConfirmados.map((a) => ({
+  const agendamentosSerializados = confirmados.map((a) => ({
     ...a,
     servico: { ...a.servico, preco: Number(a.servico.preco) },
   }));
@@ -110,7 +98,7 @@ const Home = async () => {
         {/* ── AGENDAMENTOS ──
          * [WHITE-LABEL] Título da seção de agendamentos
          */}
-        {agendamentosConfirmados.length > 0 && (
+        {agendamentosSerializados.length > 0 && (
           <>
             <h2 className="mt-6 mb-3 text-xs font-bold text-gray-400 uppercase">
               Agendamentos
