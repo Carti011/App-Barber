@@ -1,12 +1,12 @@
-import { SearchIcon } from "lucide-react";
 import Header from "./_components/header";
 import { Button } from "./_components/ui/button";
-import { Input } from "./_components/ui/input";
 import Image from "next/image";
 import { db } from "./_lib/prisma";
 import BarbeariaItem from "./_components/barbearia-item";
 import { opcoesBuscaRapida } from "./_constants/busca";
 import AgendamentoItem from "./_components/agendamento-item";
+import Busca from "./_components/busca";
+import Link from "next/link";
 
 const Home = async () => {
   const barbearias = await db.barbearia.findMany({});
@@ -31,12 +31,8 @@ const Home = async () => {
         <p>Segunda-feira, 05 de agosto.</p>
 
         {/* ── BUSCA ── */}
-        <div className="mt-6 flex items-center gap-2">
-          {/* [WHITE-LABEL] Placeholder do campo de busca */}
-          <Input placeholder="Faça sua busca..." />
-          <Button>
-            <SearchIcon />
-          </Button>
+        <div className="mt-6">
+          <Busca />
         </div>
 
         {/* ── BUSCA RÁPIDA ──
@@ -45,14 +41,21 @@ const Home = async () => {
          */}
         <div className="mt-6 flex gap-3 overflow-x-scroll [&::-webkit-scrollbar]:hidden">
           {opcoesBuscaRapida.map((opcao) => (
-            <Button className="gap-2" variant="secondary" key={opcao.titulo}>
-              <Image
-                src={opcao.imageUrl}
-                width={16}
-                height={16}
-                alt={opcao.titulo}
-              />
-              {opcao.titulo}
+            <Button
+              className="gap-2"
+              variant="secondary"
+              key={opcao.titulo}
+              asChild
+            >
+              <Link href={`/barbearias?servico=${opcao.titulo}`}>
+                <Image
+                  src={opcao.imageUrl}
+                  width={16}
+                  height={16}
+                  alt={opcao.titulo}
+                />
+                {opcao.titulo}
+              </Link>
             </Button>
           ))}
         </div>
