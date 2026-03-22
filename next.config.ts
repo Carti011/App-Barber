@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "utfs.io", // UploadThing — usado nas imagens do seed de desenvolvimento
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com", // fotos de perfil do Google OAuth
+      },
     ],
   },
 };
