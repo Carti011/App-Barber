@@ -13,8 +13,8 @@ import {
 } from "./ui/sheet";
 import { Calendario } from "./ui/calendario";
 import { ptBR } from "date-fns/locale";
-import { useEffect, useState } from "react";
-import { format, set } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
+import { format, isPast, isToday, set } from "date-fns";
 import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -51,10 +51,25 @@ const LISTA_HORARIOS = [
   "18:00",
 ];
 
-const obterHorariosDisponiveis = (agendamentos: Agendamento[]) => {
+interface ObterHorariosDisponiveisParams {
+  agendamentos: Agendamento[];
+  diaSelecionado: Date;
+}
+
+const obterHorariosDisponiveis = ({
+  agendamentos,
+  diaSelecionado,
+}: ObterHorariosDisponiveisParams) => {
   return LISTA_HORARIOS.filter((horario) => {
     const hora = Number(horario.split(":")[0]);
     const minutos = Number(horario.split(":")[1]);
+
+    const horarioNoPassado = isPast(
+      set(new Date(), { hours: hora, minutes: minutos }),
+    );
+    if (horarioNoPassado && isToday(diaSelecionado)) {
+      return false;
+    }
 
     const jaAgendado = agendamentos.some(
       (agendamento) =>
@@ -111,6 +126,14 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
   const handleSelecionarHorario = (horario: string) => {
     setHorarioSelecionado(horario);
   };
+
+  const listaHorarios = useMemo(() => {
+    if (!diaSelecionado) return [];
+    return obterHorariosDisponiveis({
+      agendamentos: agendamentosDoDia,
+      diaSelecionado,
+    });
+  }, [agendamentosDoDia, diaSelecionado]);
 
   const handleConfirmarAgendamento = async () => {
     try {
@@ -202,8 +225,8 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                   {/* ── HORÁRIOS ── */}
                   {diaSelecionado && (
                     <div className="flex gap-3 overflow-x-auto border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
-                      {obterHorariosDisponiveis(agendamentosDoDia).map(
-                        (horario) => (
+                      {listaHorarios.length > 0 ? (
+                        listaHorarios.map((horario) => (
                           <Button
                             key={horario}
                             variant={
@@ -216,7 +239,11 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                           >
                             {horario}
                           </Button>
-                        ),
+                        ))
+                      ) : (
+                        <p className="text-xs">
+                          Não há horários disponíveis para este dia.
+                        </p>
                       )}
                     </div>
                   )}
