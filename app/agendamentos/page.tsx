@@ -3,6 +3,7 @@ import Header from "../_components/header";
 import { opcoesAuth } from "../_lib/autenticacao";
 import { notFound } from "next/navigation";
 import AgendamentoItem from "../_components/agendamento-item";
+import AgendamentosDesktop from "../_components/agendamentos-desktop";
 import { obterAgendamentosConfirmados } from "../_data/obter-agendamentos-confirmados";
 import { obterAgendamentosFinalizados } from "../_data/obter-agendamentos-finalizados";
 
@@ -27,8 +28,17 @@ const AgendamentosPage = async () => {
 
   return (
     <>
-      <Header />
-      <div className="space-y-3 p-5">
+      {/* [WHITE-LABEL] Header com busca visível no desktop */}
+      <Header exibirBusca />
+
+      {/* ── DESKTOP: layout 2 colunas ── */}
+      <AgendamentosDesktop
+        confirmados={confirmadosSerializados}
+        finalizados={finalizadosSerializados}
+      />
+
+      {/* ── MOBILE: lista com Sheet ── */}
+      <div className="space-y-3 p-5 md:hidden">
         {/* [WHITE-LABEL] Título da página de agendamentos */}
         <h1 className="text-xl font-bold">Agendamentos</h1>
 
