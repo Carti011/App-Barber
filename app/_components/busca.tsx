@@ -15,7 +15,11 @@ const esquemaBusca = z.object({
   }),
 });
 
-const Busca = () => {
+interface BuscaProps {
+  placeholder?: string;
+}
+
+const Busca = ({ placeholder = "Faça sua busca..." }: BuscaProps) => {
   const form = useForm<z.infer<typeof esquemaBusca>>({
     resolver: zodResolver(esquemaBusca),
     defaultValues: {
@@ -30,7 +34,10 @@ const Busca = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex gap-2">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex items-center gap-2"
+      >
         <FormField
           control={form.control}
           name="titulo"
@@ -39,9 +46,9 @@ const Busca = () => {
               <FormControl>
                 {/* [WHITE-LABEL] Placeholder do campo de busca */}
                 <Input
-                  placeholder="Faça sua busca..."
                   {...field}
-                  className="w-full"
+                  placeholder={placeholder}
+                  className="h-10 w-full"
                 />
               </FormControl>
               <FormMessage />

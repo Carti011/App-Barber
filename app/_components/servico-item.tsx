@@ -22,10 +22,16 @@ import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { obterAgendamentos } from "../_actions/obter-agendamentos";
-import { Dialog, DialogContent } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import DialogoLogin from "./dialogo-login";
 import ResumoAgendamento from "./resumo-agendamento";
-import { useRouter } from "next/navigation";
+import { CheckIcon } from "lucide-react";
 
 interface ServicoItemProps {
   servico: ServicoPlano;
@@ -88,6 +94,7 @@ const obterHorariosDisponiveis = ({
 
 const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
   const [dialogoLoginAberto, setDialogoLoginAberto] = useState(false);
+  const [reservaEfetuada, setReservaEfetuada] = useState(false);
   const { data } = useSession();
   const [diaSelecionado, setDiaSelecionado] = useState<Date | undefined>(
     undefined,
@@ -132,8 +139,6 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
     setHorarioSelecionado(horario);
   };
 
-  const router = useRouter();
-
   const listaHorarios = useMemo(() => {
     if (!diaSelecionado) return [];
     return obterHorariosDisponiveis({
@@ -155,12 +160,7 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
       if (!dataSelecionada) return;
       await criarAgendamento({ servicoId: servico.id, data: dataSelecionada });
       handleSheetAgendamentoChange();
-      toast.success("Reserva criada com sucesso!", {
-        action: {
-          label: "Ver agendamentos",
-          onClick: () => router.push("/agendamentos"),
-        },
-      });
+      setReservaEfetuada(true);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao criar reserva!");
@@ -212,36 +212,26 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                   Reservar
                 </Button>
 
-                <SheetContent className="px-0">
+                <SheetContent className="overflow-y-auto md:max-w-md">
                   <SheetHeader>
                     <SheetTitle>Fazer Reserva</SheetTitle>
                   </SheetHeader>
 
                   {/* ── CALENDÁRIO ── */}
-                  <div className="border-b border-solid py-5">
+                  <div className="border-b border-solid px-5 pb-5">
                     <Calendario
                       mode="single"
                       locale={ptBR}
                       selected={diaSelecionado}
                       onSelect={handleSelecionarDia}
                       fromDate={new Date()}
-                      styles={{
-                        head_cell: {
-                          width: "100%",
-                          textTransform: "capitalize",
-                        },
-                        cell: { width: "100%" },
-                        button: { width: "100%" },
-                        nav_button_previous: { width: "32px", height: "32px" },
-                        nav_button_next: { width: "32px", height: "32px" },
-                        caption: { textTransform: "capitalize" },
-                      }}
+                      className="w-full"
                     />
                   </div>
 
                   {/* ── HORÁRIOS ── */}
                   {diaSelecionado && (
-                    <div className="flex gap-3 overflow-x-auto border-b border-solid p-5 [&::-webkit-scrollbar]:hidden">
+                    <div className="flex gap-3 overflow-x-auto border-b border-solid px-5 pb-5 [&::-webkit-scrollbar]:hidden">
                       {listaHorarios.length > 0 ? (
                         listaHorarios.map((horario) => (
                           <Button
@@ -258,7 +248,7 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                           </Button>
                         ))
                       ) : (
-                        <p className="text-xs">
+                        <p className="px-5 text-xs">
                           Não há horários disponíveis para este dia.
                         </p>
                       )}
@@ -267,7 +257,7 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
 
                   {/* ── RESUMO DO AGENDAMENTO ── */}
                   {dataSelecionada && (
-                    <div className="p-5">
+                    <div className="px-5">
                       <ResumoAgendamento
                         servico={servico}
                         barbearia={barbearia}
@@ -276,8 +266,9 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
                     </div>
                   )}
 
-                  <SheetFooter className="mt-5 px-5">
+                  <SheetFooter className="px-5">
                     <Button
+                      className="w-full"
                       onClick={handleConfirmarAgendamento}
                       disabled={!dataSelecionada}
                     >
@@ -298,6 +289,40 @@ const ServicoItem = ({ servico, barbearia }: ServicoItemProps) => {
       >
         <DialogContent className="w-[90%]">
           <DialogoLogin />
+        </DialogContent>
+      </Dialog>
+
+      {/* ── DIÁLOGO DE SUCESSO ── */}
+      {/* [WHITE-LABEL] Popup de confirmação após reserva criada */}
+      <Dialog open={reservaEfetuada} onOpenChange={setReservaEfetuada}>
+        <DialogContent className="w-[90%] max-w-sm overflow-hidden p-0">
+          <div className="flex flex-col items-center gap-4 px-8 pt-10 pb-6 text-center">
+            {/* Ícone de sucesso */}
+            <div className="bg-primary flex h-20 w-20 items-center justify-center rounded-full">
+              <CheckIcon className="h-10 w-10 text-black" strokeWidth={3} />
+            </div>
+
+            <DialogHeader className="space-y-2">
+              {/* [WHITE-LABEL] Título do popup de sucesso */}
+              <DialogTitle className="text-xl font-bold">
+                Reserva Efetuada!
+              </DialogTitle>
+              {/* [WHITE-LABEL] Descrição do popup de sucesso */}
+              <DialogDescription className="text-sm text-gray-400">
+                Sua reserva foi agendada com sucesso.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+
+          {/* Botão em seção separada com fundo diferente */}
+          <div className="bg-secondary px-8 py-5">
+            <Button
+              className="w-full rounded-full text-base font-bold"
+              onClick={() => setReservaEfetuada(false)}
+            >
+              Confirmar
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </>
