@@ -17,6 +17,8 @@ export const opcoesAuth: AuthOptions = {
       session.user = {
         ...session.user,
         id: user.id,
+        // Garante que a foto do Google (salva no banco pelo adapter) chegue à sessão
+        image: user.image,
       } as typeof session.user & { id: string };
       return session;
     },

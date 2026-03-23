@@ -171,30 +171,38 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
             </SheetClose>
             {confirmado && (
               <Dialog>
-                <DialogTrigger className="w-full">
+                <DialogTrigger asChild>
                   <Button variant="destructive" className="w-full">
                     Cancelar Reserva
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="w-[90%]">
-                  <DialogHeader>
-                    <DialogTitle>Você deseja cancelar sua reserva?</DialogTitle>
-                    <DialogDescription>
-                      Ao cancelar, você perderá sua reserva e não poderá
-                      recuperá-la. Essa ação é irreversível.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter className="flex flex-row gap-3">
+                <DialogContent className="w-[90%] max-w-sm overflow-hidden p-0">
+                  <div className="px-8 pt-8 pb-6 text-center">
+                    <DialogHeader className="space-y-3">
+                      {/* [WHITE-LABEL] Título do dialog de cancelamento */}
+                      <DialogTitle className="text-xl font-bold">
+                        Cancelar Reserva
+                      </DialogTitle>
+                      {/* [WHITE-LABEL] Descrição do dialog de cancelamento */}
+                      <DialogDescription className="text-sm text-gray-400">
+                        Tem certeza que deseja cancelar esse agendamento?
+                      </DialogDescription>
+                    </DialogHeader>
+                  </div>
+                  <DialogFooter className="bg-secondary flex flex-row gap-3 px-8 py-5">
                     <DialogClose asChild>
-                      <Button variant="secondary" className="w-full">
+                      <Button
+                        variant="outline"
+                        className="w-full rounded-full text-base font-bold"
+                      >
                         Voltar
                       </Button>
                     </DialogClose>
                     <DialogClose asChild>
                       <Button
                         variant="destructive"
+                        className="w-full rounded-full text-base font-bold"
                         onClick={handleCancelarAgendamento}
-                        className="w-full"
                       >
                         Confirmar
                       </Button>
